@@ -318,7 +318,6 @@ menu "Utils"
         source "package/megatools/Config.in"
         source "package/jstest2/Config.in"
         source "package/libcapsimage/Config.in"
-        source "package/unclutter/Config.in"
 endmenu
 endmenu
 
@@ -399,7 +398,6 @@ comment "Graphic libraries"
 	source "package/ocrad/Config.in"
 	source "package/psplash/Config.in"
 	source "package/sfml/Config.in"
-	source "package/wxwidgets/Config.in"
 	source "package/sdl/Config.in"
         source "package/sdl2/Config.in"
         source "package/sdl2_mixer/Config.in"
