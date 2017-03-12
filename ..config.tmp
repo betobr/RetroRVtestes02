@@ -1747,7 +1747,6 @@ deps_config := \
 	package/sdl2_mixer/Config.in \
 	package/sdl2/Config.in \
 	package/sdl/Config.in \
-	package/wxwidgets/Config.in \
 	package/sfml/Config.in \
 	package/psplash/Config.in \
 	package/ocrad/Config.in \
@@ -1801,7 +1800,6 @@ deps_config := \
 	package/bitstream-vera/Config.in \
 	package/obsidian-cursors/Config.in \
 	package/comix-cursors/Config.in \
-	package/unclutter/Config.in \
 	package/libcapsimage/Config.in \
 	package/jstest2/Config.in \
 	package/megatools/Config.in \
@@ -2236,7 +2234,7 @@ endif
 ifneq "$(HOSTARCH)" "x86_64"
 /home/beto/Documentos/batocera.linux/teste03/output/build/buildroot-config/auto.conf: FORCE
 endif
-ifneq "$(BR2_VERSION_FULL)" "2017.02-git-g7f3d17d"
+ifneq "$(BR2_VERSION_FULL)" "2017.02-git-g8111c78-dirty"
 /home/beto/Documentos/batocera.linux/teste03/output/build/buildroot-config/auto.conf: FORCE
 endif
 
