@@ -1,7 +1,11 @@
 config BR2_PACKAGE_KODI_PVR_MEDIAPORTAL_TVSERVER
 	bool "kodi-pvr-mediaportal-tvserver"
+	depends on BR2_ENABLE_LOCALE # for included live555
 	select BR2_PACKAGE_KODI_PLATFORM
 	help
 	  MediaPortal TVServer PVR client addon for Kodi
 
 	  https://github.com/kodi-pvr/pvr.mediaportal.tvserver
+
+comment "kodi-pvr-mediaportal-tvserver needs a toolchain w/ locale"
+	depends on !BR2_ENABLE_LOCALE

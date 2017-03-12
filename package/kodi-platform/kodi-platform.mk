@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KODI_PLATFORM_VERSION = 45d6ad1984fdb1dc855076ff18484dbec33939d1
+KODI_PLATFORM_VERSION = c8188d82678fec6b784597db69a68e74ff4986b5
 KODI_PLATFORM_SITE = $(call github,xbmc,kodi-platform,$(KODI_PLATFORM_VERSION))
 KODI_PLATFORM_LICENSE = GPLv2+
 KODI_PLATFORM_LICENSE_FILES = src/util/XMLUtils.h

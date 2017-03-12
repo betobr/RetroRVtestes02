@@ -1,7 +1,11 @@
 config BR2_PACKAGE_KODI_ARCH_SUPPORTS
 	bool
 	depends on BR2_USE_MMU # libcdio, and others
-	default y if (BR2_arm || (BR2_mipsel && BR2_TOOLCHAIN_USES_GLIBC) || BR2_i386 || BR2_x86_64 || BR2_aarch64) \
+	default y if (BR2_aarch64 || BR2_arm || \
+		(BR2_mipsel && BR2_TOOLCHAIN_USES_GLIBC) || \
+		(BR2_mips64el && BR2_TOOLCHAIN_USES_GLIBC) || \
+		BR2_powerpc64 || BR2_powerpc64le || \
+		BR2_i386 || BR2_x86_64) \
 		&& BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS \
 		&& BR2_TOOLCHAIN_HAS_SYNC_8
 
@@ -20,20 +24,21 @@ config BR2_PACKAGE_KODI_EGL_GLES
 	default y
 	depends on BR2_PACKAGE_HAS_LIBEGL
 	depends on BR2_PACKAGE_HAS_LIBGLES
-	depends on !BR2_PACKAGE_KODI_GL # prefer GL if available
+	depends on !BR2_PACKAGE_KODI_GL_EGL # prefer GL if available
 
-config BR2_PACKAGE_KODI_GL
+config BR2_PACKAGE_KODI_GL_EGL
 	bool
 	default y
+	depends on BR2_PACKAGE_HAS_LIBEGL
 	depends on BR2_PACKAGE_HAS_LIBGL
-	depends on !BR2_arm # kodi needs egl/gles on arm
+	depends on !BR2_aarch64 && !BR2_arm # kodi needs egl/gles on arm
 
-comment "kodi needs an OpenGL or an openGL ES and EGL backend"
-	depends on BR2_i386 || BR2_x86_64
-	depends on !BR2_PACKAGE_KODI_GL && !BR2_PACKAGE_KODI_EGL_GLES
+comment "kodi needs an OpenGL EGL with either an openGL or an OpenGL ES backend"
+	depends on !BR2_aarch64 && !BR2_arm # kodi needs egl/gles on arm
+	depends on !BR2_PACKAGE_KODI_GL_EGL && !BR2_PACKAGE_KODI_EGL_GLES
 
 comment "kodi requires an OpenGL ES and EGL backend"
-	depends on BR2_arm
+	depends on BR2_aarch64 || BR2_arm
 	depends on !BR2_PACKAGE_KODI_EGL_GLES
 
 menuconfig BR2_PACKAGE_KODI
@@ -43,15 +48,13 @@ menuconfig BR2_PACKAGE_KODI
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_7
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on !BR2_TOOLCHAIN_USES_MUSL
-	depends on BR2_PACKAGE_KODI_EGL_GLES || BR2_PACKAGE_KODI_GL
+	depends on BR2_PACKAGE_KODI_EGL_GLES || BR2_PACKAGE_KODI_GL_EGL
 	depends on BR2_USE_WCHAR
 	depends on !BR2_STATIC_LIBS # libsquish, and others
 	depends on BR2_PACKAGE_KODI_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_PYTHON
 	depends on !BR2_PACKAGE_PYTHON_PYC_ONLY
 	select BR2_NEEDS_HOST_JAVA
-	select BR2_PACKAGE_BOOST
-	select BR2_PACKAGE_BOOST_THREAD
 	select BR2_PACKAGE_BZIP2
 	select BR2_PACKAGE_EXPAT
 	select BR2_PACKAGE_FFMPEG
@@ -60,27 +63,18 @@ menuconfig BR2_PACKAGE_KODI
 	select BR2_PACKAGE_FFMPEG_SWSCALE
 	select BR2_PACKAGE_FONTCONFIG
 	select BR2_PACKAGE_FREETYPE
-	select BR2_PACKAGE_GIFLIB
-	select BR2_PACKAGE_JASPER
-	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_GMP
+	select BR2_PACKAGE_KODI_SKIN_ESTUARY if !BR2_PACKAGE_KODI_SKIN_ENABLED
 	select BR2_PACKAGE_LIBASS
 	select BR2_PACKAGE_LIBCDIO
 	select BR2_PACKAGE_LIBCROSSGUID
 	select BR2_PACKAGE_LIBCURL
-	select BR2_PACKAGE_LIBDCADEC
+	select BR2_PACKAGE_LIBDVDNAV
 	select BR2_PACKAGE_LIBFRIBIDI
-	select BR2_PACKAGE_LIBGLEW if BR2_PACKAGE_KODI_GL
-	select BR2_PACKAGE_LIBGLU if BR2_PACKAGE_KODI_GL
+	select BR2_PACKAGE_LIBGLU if BR2_PACKAGE_KODI_GL_EGL
 	select BR2_PACKAGE_LIBGCRYPT
-	select BR2_PACKAGE_LIBMPEG2
-	select BR2_PACKAGE_LIBOGG
 	select BR2_PACKAGE_LIBPLIST
-	select BR2_PACKAGE_LIBPNG
 	select BR2_PACKAGE_LIBSAMPLERATE
-	select BR2_PACKAGE_LIBSQUISH
-	select BR2_PACKAGE_LIBVORBIS
-	select BR2_PACKAGE_LIBXML2
-	select BR2_PACKAGE_LIBXSLT
 	select BR2_PACKAGE_LZO
 	select BR2_PACKAGE_NCURSES
 	select BR2_PACKAGE_OPENSSL
@@ -96,16 +90,11 @@ menuconfig BR2_PACKAGE_KODI
 	select BR2_PACKAGE_PYTHON_UNICODEDATA
 	select BR2_PACKAGE_PYTHON_ZLIB
 	select BR2_PACKAGE_READLINE
-	select BR2_PACKAGE_SDL
-	select BR2_PACKAGE_SDL2
-	select BR2_PACKAGE_SDL_X11 if BR2_PACKAGE_KODI_GL
-	select BR2_PACKAGE_SDL_IMAGE if BR2_PACKAGE_KODI_GL
 	select BR2_PACKAGE_SQLITE
 	select BR2_PACKAGE_TAGLIB
-	select BR2_PACKAGE_TIFF
 	select BR2_PACKAGE_TINYXML
-	select BR2_PACKAGE_LIBDRM if BR2_PACKAGE_KODI_GL
-	select BR2_PACKAGE_XLIB_LIBXRANDR if BR2_PACKAGE_KODI_GL
+	select BR2_PACKAGE_LIBDRM if BR2_PACKAGE_KODI_GL_EGL
+	select BR2_PACKAGE_XLIB_LIBXRANDR if BR2_PACKAGE_KODI_GL_EGL
 	select BR2_PACKAGE_YAJL
 	select BR2_PACKAGE_ZLIB
 	select BR2_TOOLCHAIN_GLIBC_GCONV_LIBS_COPY if BR2_TOOLCHAIN_USES_GLIBC # runtime UTF conversion support
@@ -133,11 +122,24 @@ config BR2_PACKAGE_KODI_AVAHI
 	  Enable Avahi support.
 	  Select this if you want Kodi to support Bonjour protocol.
 
+config BR2_PACKAGE_KODI_BLUEZ
+	bool "bluetooth"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_4 # bluez5_utils
+	depends on !BR2_PACKAGE_BLUEZ_UTILS # bluez5_utils
+	select BR2_PACKAGE_BLUEZ5_UTILS
+	help
+	    Enable bluetooth support
+
 config BR2_PACKAGE_KODI_DBUS
 	bool "dbus"
 	select BR2_PACKAGE_DBUS
 	help
 	  Enable D-Bus support
+
+config BR2_PACKAGE_KODI_EVENTCLIENTS
+	bool "eventclients"
+	help
+	  Enable event clients support
 
 config BR2_PACKAGE_KODI_LIBBLURAY
 	bool "blu-ray"
@@ -192,12 +194,11 @@ config BR2_PACKAGE_KODI_NONFREE
 	  Enable components with non-free licenses. This option
 	  currently only controls support for RAR archives.
 
-config BR2_PACKAGE_KODI_RTMPDUMP
-	bool "rtmp"
-	select BR2_PACKAGE_RTMPDUMP
+config BR2_PACKAGE_KODI_PULSEAUDIO
+	bool "pulseaudio"
+	select BR2_PACKAGE_PULSEAUDIO
 	help
-	  Enable RTMP input support.
-	  Select this if you want to play back rtmp stream.
+	  Enable Pulseaudio support.
 
 config BR2_PACKAGE_KODI_LIBSHAIRPLAY
 	bool "shairport"
@@ -282,6 +283,11 @@ menu "Audio encoder addons"
 	source "package/kodi-audioencoder-wav/Config.in"
 endmenu
 
+menu "Inputstream addons"
+	source "package/kodi-inputstream-adaptive/Config.in"
+	source "package/kodi-inputstream-rtmp/Config.in"
+endmenu
+
 menu "PVR addons"
 	source "package/kodi-pvr-argustv/Config.in"
 	source "package/kodi-pvr-dvblink/Config.in"
@@ -317,9 +323,47 @@ menu "Screensavers"
 	source "package/kodi-screensaver-stars/Config.in"
 endmenu
 
+menu "Skins"
+
+config BR2_PACKAGE_KODI_SKIN_ENABLED
+	bool
+
+choice
+	prompt "Default skin"
+
+config BR2_PACKAGE_KODI_SKIN_DEFAULT_ESTUARY
+	bool "kodi-skin-estuary"
+	depends on BR2_PACKAGE_KODI_SKIN_ESTUARY
+
+config BR2_PACKAGE_KODI_SKIN_DEFAULT_ESTOUCHY
+	bool "kodi-skin-estouchy"
+	depends on BR2_PACKAGE_KODI_SKIN_ESTOUCHY
+
+config BR2_PACKAGE_KODI_SKIN_DEFAULT_CONFLUENCE
+	bool "kodi-skin-confluence"
+	depends on BR2_PACKAGE_KODI_SKIN_CONFLUENCE
+
+endchoice
+
+config BR2_PACKAGE_KODI_SKIN_ESTUARY
+	bool "kodi-skin-estuary"
+	default y
+	help
+	  Default skin Estuary
+
+config BR2_PACKAGE_KODI_SKIN_ESTOUCHY
+	bool "kodi-skin-estouchy"
+	default y
+	select BR2_PACKAGE_KODI_SKIN_ENABLED
+	help
+	  Default skin Estouchy
+
+	source "package/kodi-skin-confluence/Config.in"
+endmenu
+
 menu "Visualisations"
 	source "package/kodi-visualisation-fishbmc/Config.in"
-	source "package/kodi-visualisation-fountain/Config.in"
+#	source "package/kodi-visualisation-fountain/Config.in"
 	source "package/kodi-visualisation-goom/Config.in"
 	source "package/kodi-visualisation-shadertoy/Config.in"
 	source "package/kodi-visualisation-spectrum/Config.in"

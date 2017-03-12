@@ -11,26 +11,6 @@ Signed-off-by: Nicolas Adenis-Lamarre <nicolas.adenis-lamarre@gmail.com>
  xbmc/input/linux/LinuxInputDevices.h   |  1 +
  4 files changed, 90 insertions(+), 2 deletions(-)
 
-diff --git a/configure.ac b/configure.ac
-index d5e76ee..a387bfd 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -649,7 +649,6 @@
-      target_platform=target_linux
-      ARCH="arm"
-      use_arch="arm"
--     use_joystick=no
-      use_neon=yes
-      use_gles=yes
-      use_gl=no
-@@ -1264,7 +1263,6 @@
-   if test "$use_joystick" != "no"; then
-     PKG_CHECK_MODULES([SDL2], [sdl2],
-       [AC_DEFINE([HAVE_SDL_VERSION],[2],["SDL major version"])
--       AC_DEFINE([HAVE_SDL],[1],["Define to 1 if using sdl"])
-        INCLUDES="$INCLUDES $SDL2_CFLAGS"; LIBS="$LIBS $SDL2_LIBS"; use_joystick="yes"],
-       [if test "$use_joystick" = "yes"; then
-         AC_MSG_ERROR($sdl_joystick_not_found)
 diff --git a/xbmc/input/linux/LinuxInputDevices.cpp b/xbmc/input/linux/LinuxInputDevices.cpp
 index 32a3b46..18734fb 100644
 --- a/xbmc/input/linux/LinuxInputDevices.cpp
@@ -138,18 +118,5 @@ index 32a3b46..18734fb 100644
    if (ioctl(fd, EVIOCGRAB, 1) && errno != EINVAL)
    {
      close(fd);
-diff --git a/xbmc/input/linux/LinuxInputDevices.h b/xbmc/input/linux/LinuxInputDevices.h
-index cf1c5ce..f05673b 100644
---- a/xbmc/input/linux/LinuxInputDevices.h
-+++ b/xbmc/input/linux/LinuxInputDevices.h
-@@ -92,6 +92,7 @@ public:
-   size_t Size() { return m_devices.size(); }
- private:
-   CCriticalSection m_devicesListLock;
-+  bool isUdevJoystick(const char* devpath);
-   bool CheckDevice(const char *device);
-   std::vector<CLinuxInputDevice*> m_devices;
-   bool m_bReInitialize;
--- 
 2.1.4
 

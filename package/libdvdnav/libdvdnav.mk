@@ -14,4 +14,9 @@ LIBDVDNAV_LICENSE_FILES = COPYING
 # 0001-do-not-match-nios2-as-os2.patch
 LIBDVDNAV_AUTORECONF = YES
 
+# enable Kodi-specific code
+ifeq ($(BR2_PACKAGE_KODI),y)
+LIBDVDNAV_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -D_XBMC"
+endif
+
 $(eval $(autotools-package))

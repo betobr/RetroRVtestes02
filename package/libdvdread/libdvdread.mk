@@ -13,4 +13,9 @@ LIBDVDREAD_LICENSE_FILES = COPYING
 LIBDVDREAD_CONF_OPTS = --with-libdvdcss
 LIBDVDREAD_DEPENDENCIES = libdvdcss host-pkgconf
 
+# enable Kodi-specific code
+ifeq ($(BR2_PACKAGE_KODI),y)
+LIBDVDREAD_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -D_XBMC"
+endif
+
 $(eval $(autotools-package))

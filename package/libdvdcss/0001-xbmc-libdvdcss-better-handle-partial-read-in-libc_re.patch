@@ -1,0 +1,49 @@
+From d113ac14b45961f958f4aa927c66b3c367f4637c Mon Sep 17 00:00:00 2001
+From: Voyager1 <voyager@xbmc.org>
+Date: Sat, 13 Feb 2016 20:44:21 +0100
+Subject: [PATCH 1/2] [xbmc] [libdvdcss] better handle partial read in
+ libc_read
+
+Downloaded from
+https://github.com/xbmc/libdvdcss/commit/d113ac14b45961f958f4aa927c66b3c367f4637c
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ src/device.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/src/device.c b/src/device.c
+index af735e0..1936b44 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -608,13 +608,21 @@ static int libc_read ( dvdcss_t dvdcss, void *p_buffer, int i_blocks )
+     off_t i_size, i_ret, i_ret_blocks;
+ 
+     i_size = (off_t)i_blocks * (off_t)DVDCSS_BLOCK_SIZE;
+-    i_ret = read( dvdcss->i_fd, p_buffer, i_size );
+-
+-    if( i_ret < 0 )
+-    {
+-        print_error( dvdcss, "read error" );
++    i_ret = 0;
++    while (i_ret < i_size)
++    {
++      off_t i_r;
++      i_r = read(dvdcss->i_fd, ((char*)p_buffer) + i_ret, i_size - i_ret);
++      if (i_r < 0)
++      {
++        print_error(dvdcss, "read error");
+         dvdcss->i_pos = -1;
+-        return i_ret;
++        return i_r;
++      }
++      if (i_r == 0)
++        break;
++
++      i_ret += i_r;
+     }
+ 
+     i_ret_blocks = i_ret / DVDCSS_BLOCK_SIZE;
+-- 
+2.8.1
+

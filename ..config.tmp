@@ -2069,8 +2069,8 @@ deps_config := \
 	package/kodi-visualisation-spectrum/Config.in \
 	package/kodi-visualisation-shadertoy/Config.in \
 	package/kodi-visualisation-goom/Config.in \
-	package/kodi-visualisation-fountain/Config.in \
 	package/kodi-visualisation-fishbmc/Config.in \
+	package/kodi-skin-confluence/Config.in \
 	package/kodi-screensaver-stars/Config.in \
 	package/kodi-screensaver-rsxs/Config.in \
 	package/kodi-screensaver-pyro/Config.in \
@@ -2100,6 +2100,8 @@ deps_config := \
 	package/kodi-pvr-dvbviewer/Config.in \
 	package/kodi-pvr-dvblink/Config.in \
 	package/kodi-pvr-argustv/Config.in \
+	package/kodi-inputstream-rtmp/Config.in \
+	package/kodi-inputstream-adaptive/Config.in \
 	package/kodi-audioencoder-wav/Config.in \
 	package/kodi-audioencoder-vorbis/Config.in \
 	package/kodi-audioencoder-lame/Config.in \
@@ -2234,7 +2236,7 @@ endif
 ifneq "$(HOSTARCH)" "x86_64"
 /home/beto/Documentos/batocera.linux/teste03/output/build/buildroot-config/auto.conf: FORCE
 endif
-ifneq "$(BR2_VERSION_FULL)" "2017.02-git-g8111c78-dirty"
+ifneq "$(BR2_VERSION_FULL)" "2017.02-git-g4a03786-dirty"
 /home/beto/Documentos/batocera.linux/teste03/output/build/buildroot-config/auto.conf: FORCE
 endif
 
